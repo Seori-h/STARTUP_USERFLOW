@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TO-BE 유저 플로우 — 중소기업/스타트업</title>
+<style>
+:root{--acc:#E04F00;--acc2:#ff8c4a;--bg:#f6f5f2;--white:#fff;--dk:#141414;--md:#4a4a4a;--lt:#b8b5b0;--bd:#e2e0db;--exitbg:#fff2f2;--exitbd:#f0aaaa;--exitdk:#b91c1c;--exitlbl:#d42020;--fixbg:#fff8f3;--fixbd:#f0c8a0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;background:#b8b6b1;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.S{position:relative;width:100vw;height:56.25vw;max-height:100vh;max-width:177.78vh;background:var(--bg);overflow:hidden;cursor:pointer;user-select:none;font-family:'Apple SD Gothic Neo','Noto Sans KR','맑은 고딕',sans-serif;}
+.S::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(0,0,0,.024)1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.024)1px,transparent 1px);background-size:3.8% 6.7%;}
+.HINT{position:absolute;top:3%;left:50%;transform:translateX(-50%);z-index:20;display:flex;align-items:center;gap:.5%;white-space:nowrap;font-size:1.2vw;font-weight:500;color:var(--md);transition:opacity .5s;}
+.HINT.off{opacity:0;pointer-events:none;}
+.pd{flex-shrink:0;width:.85vw;height:.85vw;border-radius:50%;background:var(--acc);animation:pd 1.5s ease-in-out infinite;}
+@keyframes pd{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.8);opacity:.28}}
+.BOARD{position:absolute;bottom:0;left:0;right:0;height:46%;display:flex;align-items:stretch;padding:0 2% 2.5% 2%;gap:1%;z-index:5;}
+.tile{flex:1;background:var(--white);border:2.5px solid var(--bd);border-radius:1.4vw;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 .35vw 1.8vw rgba(0,0,0,.08);transition:border-color .4s,box-shadow .4s,transform .4s,opacity .4s;}
+.tile.active{border-color:var(--acc);box-shadow:0 .7vw 3vw rgba(224,79,0,.28);transform:translateY(-.4vw);}
+.tile.done{opacity:.42;}
+.tile .tbar{height:.42vw;background:var(--bd);flex-shrink:0;transition:background .4s;}
+.tile.active .tbar{background:var(--acc);}
+.tile .ti{padding:5% 7% 5%;flex:1;display:flex;flex-direction:column;justify-content:center;}
+.tile .sn{font-size:.88vw;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--lt);margin-bottom:5%;transition:color .3s;}
+.tile.active .sn{color:var(--acc);}
+.tile .ico{font-size:2.8vw;line-height:1;margin-bottom:5%;}
+.tile .tn{font-size:1.32vw;font-weight:900;color:var(--dk);line-height:1.2;letter-spacing:-.02em;margin-bottom:5%;}
+.tile .hr{height:1.5px;background:#ececec;margin-bottom:5%;}
+.tile .td{font-size:1.02vw;color:var(--md);line-height:1.65;font-weight:500;word-break:keep-all;}
+.conn{flex:0 0 1.2%;display:flex;align-items:center;justify-content:center;font-size:1.6vw;color:#c8c5bf;opacity:.5;padding-bottom:2%;}
+#TOK{position:absolute;z-index:30;width:7vw;height:7vw;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 .55vw 2.5vw rgba(224,79,0,.55),0 .15vw .6vw rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font-size:3.2vw;line-height:1;transition:left .75s cubic-bezier(.65,0,.35,1),top .75s cubic-bezier(.65,0,.35,1),opacity .4s;will-change:left,top;}
+#TOK.hide{opacity:0;pointer-events:none;}
+#TOK.bnc{animation:bnc .5s ease;}
+@keyframes bnc{0%{transform:scale(1)}35%{transform:scale(1.28) translateY(-10%)}68%{transform:scale(.93)}100%{transform:scale(1)}}
+.MCARD{position:absolute;z-index:40;width:27vw;max-width:80%;border-radius:1.5vw;overflow:hidden;box-shadow:0 .8vw 3.5vw rgba(0,0,0,.15);opacity:0;pointer-events:none;transform:translateY(.8vw) scale(.88);transition:opacity .4s,transform .4s;}
+.MCARD.on{opacity:1;transform:translateY(0) scale(1);animation:pop .45s cubic-bezier(.34,1.52,.64,1);}
+@keyframes pop{0%{transform:scale(.8) translateY(.8vw);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+.MCARD .mc-exit{background:var(--exitbg);border:2px solid var(--exitbd);border-bottom:none;border-radius:1.5vw 1.5vw 0 0;padding:1.4% 2% 1.2%;}
+.MCARD .mc-exit .elbl{font-size:.84vw;font-weight:900;color:var(--exitlbl);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.55vw;}
+.MCARD .mc-exit .etxt{font-size:1.18vw;color:var(--exitdk);font-weight:700;line-height:1.55;word-break:keep-all;}
+.MCARD .mc-div{height:3px;background:linear-gradient(90deg,#f0aaaa 0%,#f0c8a0 100%);}
+.MCARD .mc-fix{background:var(--fixbg);border:2px solid var(--fixbd);border-top:none;border-radius:0 0 1.5vw 1.5vw;padding:1.2% 2% 1.4%;}
+.MCARD .mc-fix .flbl{font-size:.84vw;font-weight:900;color:var(--acc);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.55vw;}
+.MCARD .mc-fix .ftxt{font-size:1.18vw;color:#7a3200;font-weight:700;line-height:1.55;word-break:keep-all;}
+.EARR{position:absolute;z-index:39;opacity:0;pointer-events:none;transition:opacity .3s .12s;overflow:visible;}
+.EARR.on{opacity:1;}
+#DONE{position:absolute;z-index:50;background:rgba(255,255,255,.96);border:1.5px solid var(--acc);border-radius:999px;padding:.32vw 1.3vw;display:flex;align-items:center;gap:.4vw;white-space:nowrap;box-shadow:0 .2vw .9vw rgba(224,79,0,.2);opacity:0;pointer-events:none;transition:opacity .4s,transform .3s;transform:scale(.88);}#DONE.on{opacity:1;transform:scale(1);pointer-events:auto;}#DONE .di{font-size:1vw;line-height:1;}#DONE .dt{font-size:.8vw;font-weight:800;color:var(--dk);}#DONE .ds{display:none;}#DONE .rb{background:var(--acc);color:#fff;border-radius:999px;padding:.18vw .75vw;font-size:.68vw;font-weight:800;cursor:pointer;border:none;margin-left:.3vw;transition:background .2s;}#DONE .rb:hover{background:#c94500;}
+.HDR{position:absolute;top:2.8%;left:2.5%;z-index:15;max-width:55%;}
+.HDR .htitle{font-size:1.65vw;font-weight:900;color:var(--dk);letter-spacing:-.025em;line-height:1.25;white-space:normal;word-break:keep-all;}
+.HDR .htitle em{color:var(--acc);font-style:normal;}
+.DOTS{position:absolute;bottom:1.2%;right:2%;display:flex;gap:.55%;z-index:50;}
+.dot{width:.55vw;height:.55vw;border-radius:50%;background:var(--bd);transition:background .3s,transform .3s;}
+.dot.on{background:var(--acc);transform:scale(1.55);}
+</style>
+</head>
+<body>
+<div class="S" id="S">
+  <div class="HDR"><div class="htitle">TO-BE 유저 플로우 <em>(중소기업/스타트업)</em></div></div>
+  <div class="HINT" id="HINT"><div class="pd"></div>화면을 클릭하면 시작됩니다</div>
+  <div class="BOARD">
+    <div class="tile" id="t1"><div class="tbar"></div><div class="ti"><div class="sn">STEP 1</div><div class="ico">🏠</div><div class="tn">홈/메인</div><div class="hr"></div><div class="td">메인 히어로에서<br>"우리 규모에 맞는<br>통합 인프라" 5초 스냅샷</div></div></div>
+    <div class="conn">▶</div>
+    <div class="tile" id="t2"><div class="tbar"></div><div class="ti"><div class="sn">STEP 2</div><div class="ico">🔍</div><div class="tn">탐색</div><div class="hr"></div><div class="td">산업/규모별 고객사례<br>목록에서<br>"비슷한 케이스" 탐색</div></div></div>
+    <div class="conn">▶</div>
+    <div class="tile" id="t3"><div class="tbar"></div><div class="ti"><div class="sn">STEP 3</div><div class="ico">📊</div><div class="tn">사례확인</div><div class="hr"></div><div class="td">유사 상황 사례에서<br>"도입 방식·효과"<br>핵심만 확인</div></div></div>
+    <div class="conn">▶</div>
+    <div class="tile" id="t4"><div class="tbar"></div><div class="ti"><div class="sn">STEP 4</div><div class="ico">⚡</div><div class="tn">범위확인</div><div class="hr"></div><div class="td">서비스 상세에서<br>"무엇까지/얼마나<br>(범위·옵션)" 한눈에 확인</div></div></div>
+    <div class="conn">▶</div>
+    <div class="tile" id="t5"><div class="tbar"></div><div class="ti"><div class="sn">STEP 5</div><div class="ico">📋</div><div class="tn">신청</div><div class="hr"></div><div class="td">상담 조건 선택 후<br>"문의폼 제출"</div></div></div>
+    
+  </div>
+  <div id="TOK" class="hide">🎯</div>
+  <div class="MCARD" id="mc1">
+    <div class="mc-exit"><div class="elbl">⚠ AS-IS 이탈</div><div class="etxt">메인페이지 히어로에서 "우리에게 맞는지(규모/상황)" 1줄 요약이 즉시 보이지 않음</div></div>
+    <div class="mc-div"></div>
+    <div class="mc-fix"><div class="flbl">✅ TO-BE 해결</div><div class="ftxt">메인 히어로에 '대상(규모/업종) + 제공가치(통합 인프라) + 기대효과' 상단 고정 요약</div></div>
+  </div>
+  <svg class="EARR" id="ea1" width="28" height="60" viewBox="0 0 28 60"><path d="M14 0 L14 48" stroke="#f0b090" stroke-width="2.5" fill="none" stroke-dasharray="5 4"/><polygon points="7,46 14,60 21,46" fill="#f0b090"/></svg>
+  <div class="MCARD" id="mc4">
+    <div class="mc-exit"><div class="elbl">⚠ AS-IS 이탈</div><div class="etxt">서비스 상세에서 제품 정보 나열로 "무엇을 해주는지(범위/옵션)" 판단이 어려움</div></div>
+    <div class="mc-div"></div>
+    <div class="mc-fix"><div class="flbl">✅ TO-BE 해결</div><div class="ftxt">상세 상단 '서비스 소개서' 다운로드 CTA + 결정 근거 요약 콘텐츠(문제-솔루션-성과/기대효과/프로세스) 고정 배치</div></div>
+  </div>
+  <svg class="EARR" id="ea4" width="28" height="60" viewBox="0 0 28 60"><path d="M14 0 L14 48" stroke="#f0b090" stroke-width="2.5" fill="none" stroke-dasharray="5 4"/><polygon points="7,46 14,60 21,46" fill="#f0b090"/></svg>
+  <div class="MCARD" id="mc5">
+    <div class="mc-exit"><div class="elbl">⚠ AS-IS 이탈</div><div class="etxt">상담/문의 폼 "내 상황을 어떻게 적어야 하는지" 자유기입형으로 망설여짐</div></div>
+    <div class="mc-div"></div>
+    <div class="mc-fix"><div class="flbl">✅ TO-BE 해결</div><div class="ftxt">사용자 여정 3-STEP CTA + Contact는 업종(유형) 선택형 단일 문의폼</div></div>
+  </div>
+  <svg class="EARR" id="ea5" width="28" height="60" viewBox="0 0 28 60"><path d="M14 0 L14 48" stroke="#f0b090" stroke-width="2.5" fill="none" stroke-dasharray="5 4"/><polygon points="7,46 14,60 21,46" fill="#f0b090"/></svg>
+
+  <div id="DONE"><span class="di">🎉</span><div class="dt">문의/상담 신청 완료!</div><div class="ds">TO-BE 유저 플로우 완주 🎉</div><button class="rb" id="RB">↩ 처음부터 다시</button></div>
+  <div class="DOTS" id="DOTS"></div>
+</div>
+<script>
+const SEQ=[
+  {tile:0,tok:0,show:[],hide:['mc1','ea1','mc4','ea4','mc5','ea5','DONE']},
+  {tile:1,tok:1,show:['mc1','ea1'],hide:[]},
+  {tile:2,tok:2,show:[],hide:[]},
+  {tile:3,tok:3,show:[],hide:[]},
+  {tile:4,tok:4,show:['mc4','ea4'],hide:[]},
+  {tile:5,tok:5,show:['mc5','ea5'],hide:[]},
+  {tile:5,tok:5,show:['DONE'],hide:[]},
+];
+const TOTAL=SEQ.length-1;
+const S=document.getElementById('S');
+const tok=document.getElementById('TOK');
+const hint=document.getElementById('HINT');
+const dotsW=document.getElementById('DOTS');
+for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot';d.id='d'+i;dotsW.appendChild(d);}
+let cur=0,busy=false;
+function tPos(n){const sr=S.getBoundingClientRect();const tr=document.getElementById('t'+n).getBoundingClientRect();return{cx:tr.left-sr.left+tr.width/2,tileTop:tr.top-sr.top};}
+function place(n){
+  const sr=S.getBoundingClientRect();const sw=sr.width,sh=sr.height;
+  const {cx,tileTop}=tPos(n);const tokTop=tileTop-tok.offsetHeight-16;
+  const card=document.getElementById('mc'+n);const arrow=document.getElementById('ea'+n);
+  if(!card)return;
+  const cw=card.offsetWidth,ch=card.offsetHeight;
+  let cardTop;
+  if(n===4)      cardTop=Math.max(sh*0.28,tokTop-ch-10);
+  else if(n===5) cardTop=Math.max(sh*0.05,tokTop-ch*2-20);
+  else             cardTop=Math.max(sh*0.08,tokTop-ch-16);
+  const pad=sw*0.015;
+  const cardLeft=Math.max(pad,Math.min(cx-cw/2,sw-cw-pad));
+  card.style.left=cardLeft+'px';card.style.top=cardTop+'px';
+  const arrTop=cardTop+ch;const arrH=Math.max(tokTop-arrTop,16);
+  arrow.setAttribute('height',arrH);arrow.setAttribute('viewBox',`0 0 28 ${arrH}`);
+  arrow.querySelector('path').setAttribute('d',`M14 0 L14 ${arrH-13}`);
+  arrow.querySelector('polygon').setAttribute('points',`7,${arrH-14} 14,${arrH} 21,${arrH-14}`);
+  arrow.style.left=(cx-14)+'px';arrow.style.top=arrTop+'px';
+}
+function apply(idx,anim){
+  const s=SEQ[idx];
+  for(let i=1;i<=5;i++){const t=document.getElementById('t'+i);t.classList.remove('active','done');if(i===s.tile)t.classList.add('active');else if(i<s.tile)t.classList.add('done');}
+  if(s.tok===0){tok.classList.add('hide');}
+  else{
+    tok.classList.remove('hide');
+    const {cx,tileTop}=tPos(s.tok);const tx=cx-tok.offsetWidth/2,ty=tileTop-tok.offsetHeight-16;
+    if(!anim){tok.style.transition='none';tok.style.left=tx+'px';tok.style.top=ty+'px';}
+    else{
+      const prev=idx>0?SEQ[idx-1].tok:0,mv=prev!==s.tok;
+      tok.style.transition=mv?'left .75s cubic-bezier(.65,0,.35,1),top .75s cubic-bezier(.65,0,.35,1),opacity .4s':'left .3s,top .3s,opacity .4s';
+      tok.style.left=tx+'px';tok.style.top=ty+'px';
+      if(mv)setTimeout(()=>{tok.classList.remove('bnc');void tok.offsetWidth;tok.classList.add('bnc');},780);
+    }
+    if([1,4,5].includes(s.tok))requestAnimationFrame(()=>place(s.tok));
+  }
+  s.show.forEach(id=>{const e=document.getElementById(id);if(e)e.classList.add('on');});if(s.show.includes('DONE'))requestAnimationFrame(placeDone);
+  s.hide.forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('on');});
+  [1,4,5].forEach(n=>{const c=document.getElementById('mc'+n);if(c&&c.classList.contains('on'))place(n);});
+  S.style.cursor=idx===TOTAL?'default':'pointer';
+  for(let i=0;i<TOTAL;i++){const d=document.getElementById('d'+i);if(d)d.classList.toggle('on',i+1===idx);}
+  if(idx>=1)hint.classList.add('off');
+  if(idx===0)hint.classList.remove('off');
+}
+function placeDone(){
+  var sr=S.getBoundingClientRect();
+  var t5r=document.getElementById('t5').getBoundingClientRect();
+  var done=document.getElementById('DONE');
+  var dw=done.offsetWidth,dh=done.offsetHeight;
+  var cx=t5r.left-sr.left+t5r.width/2;
+  var cy=t5r.top-sr.top+t5r.height*0.80;
+  done.style.left=(cx-dw/2)+'px';
+  done.style.top=(cy-dh/2)+'px';
+}
+function next(){if(busy||cur>=TOTAL)return;busy=true;cur++;apply(cur,true);setTimeout(()=>{busy=false;},460);}
+function reset(){cur=0;document.querySelectorAll('.MCARD,.EARR,#DONE').forEach(e=>e.classList.remove('on'));apply(0,false);}
+S.addEventListener('click',e=>{if(e.target.closest('#RB'))return;if(cur===TOTAL)return;next();});
+document.getElementById('RB').addEventListener('click',e=>{e.stopPropagation();reset();});
+window.addEventListener('load',()=>apply(0,false));
+window.addEventListener('resize',()=>{apply(cur,false);var d=document.getElementById('DONE');if(d&&d.classList.contains('on'))placeDone();});
+</script>
+</body>
+</html>
